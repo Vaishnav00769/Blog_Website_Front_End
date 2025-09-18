@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User, PenTool, LogOut, Plus, Trash2, Edit3 } from 'lucide-react';
+import { User, PenTool, LogOut, Plus, Trash2, Edit3, Menu, X } from 'lucide-react';
 
 const API_BASE = 'https://blog-website-back-end.onrender.com';
 
@@ -8,6 +8,7 @@ function App() {
   const [blogs, setBlogs] = useState([]);
   const [currentView, setCurrentView] = useState('blogs');
   const [loading, setLoading] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -46,6 +47,12 @@ function App() {
     localStorage.removeItem('token');
     setUser(null);
     setCurrentView('blogs');
+    setMobileMenuOpen(false);
+  };
+
+  const handleNavClick = (view) => {
+    setCurrentView(view);
+    setMobileMenuOpen(false);
   };
 
   if (!user) {
@@ -56,19 +63,22 @@ function App() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       {/* Header */}
       <header className="bg-white shadow-sm border-b">
-        <div className="max-w-6xl mx-auto px-6 py-4">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4">
           <div className="flex items-center justify-between">
+            
+            {/* Logo */}
             <div className="flex items-center space-x-3">
               <PenTool className="text-indigo-600" size={28} />
-              <h1 className="text-2xl font-bold text-gray-900">BlogSpace</h1>
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-900">BlogSpace</h1>
             </div>
             
-            <nav className="flex items-center space-x-6">
+            {/* Desktop Nav */}
+            <nav className="hidden md:flex items-center space-x-6">
               <button
                 onClick={() => setCurrentView('blogs')}
                 className={`px-4 py-2 rounded-lg transition-colors ${
-                  currentView === 'blogs' 
-                    ? 'bg-indigo-100 text-indigo-700' 
+                  currentView === 'blogs'
+                    ? 'bg-indigo-100 text-indigo-700'
                     : 'text-gray-600 hover:text-indigo-600'
                 }`}
               >
@@ -77,8 +87,8 @@ function App() {
               <button
                 onClick={() => setCurrentView('create')}
                 className={`px-4 py-2 rounded-lg transition-colors ${
-                  currentView === 'create' 
-                    ? 'bg-indigo-100 text-indigo-700' 
+                  currentView === 'create'
+                    ? 'bg-indigo-100 text-indigo-700'
                     : 'text-gray-600 hover:text-indigo-600'
                 }`}
               >
@@ -87,8 +97,8 @@ function App() {
               <button
                 onClick={() => setCurrentView('profile')}
                 className={`px-4 py-2 rounded-lg transition-colors ${
-                  currentView === 'profile' 
-                    ? 'bg-indigo-100 text-indigo-700' 
+                  currentView === 'profile'
+                    ? 'bg-indigo-100 text-indigo-700'
                     : 'text-gray-600 hover:text-indigo-600'
                 }`}
               >
@@ -96,7 +106,8 @@ function App() {
               </button>
             </nav>
 
-            <div className="flex items-center space-x-4">
+            {/* Desktop User info + Logout */}
+            <div className="hidden md:flex items-center space-x-4">
               <div className="flex items-center space-x-2">
                 <User size={20} className="text-gray-500" />
                 <span className="text-gray-700 font-medium">{user.name}</span>
@@ -109,12 +120,73 @@ function App() {
                 <span>Logout</span>
               </button>
             </div>
+
+            {/* Mobile hamburger button */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden p-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+            >
+              {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
           </div>
+
+          {/* Mobile Menu */}
+          {mobileMenuOpen && (
+            <div className="md:hidden mt-4 pb-4 border-t pt-4">
+              <div className="space-y-2">
+                <button
+                  onClick={() => handleNavClick('blogs')}
+                  className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${
+                    currentView === 'blogs'
+                      ? 'bg-indigo-100 text-indigo-700'
+                      : 'text-gray-600 hover:text-indigo-600 hover:bg-gray-50'
+                  }`}
+                >
+                  All Blogs
+                </button>
+                <button
+                  onClick={() => handleNavClick('create')}
+                  className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${
+                    currentView === 'create'
+                      ? 'bg-indigo-100 text-indigo-700'
+                      : 'text-gray-600 hover:text-indigo-600 hover:bg-gray-50'
+                  }`}
+                >
+                  Write Blog
+                </button>
+                <button
+                  onClick={() => handleNavClick('profile')}
+                  className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${
+                    currentView === 'profile'
+                      ? 'bg-indigo-100 text-indigo-700'
+                      : 'text-gray-600 hover:text-indigo-600 hover:bg-gray-50'
+                  }`}
+                >
+                  My Profile
+                </button>
+                
+                {/* Mobile User info */}
+                <div className="flex items-center space-x-2 px-4 py-2 bg-gray-50 rounded-lg mt-4">
+                  <User size={20} className="text-gray-500" />
+                  <span className="text-gray-700 font-medium">{user.name}</span>
+                </div>
+                
+                {/* Mobile Logout */}
+                <button
+                  onClick={logout}
+                  className="w-full flex items-center space-x-2 text-left px-4 py-2 rounded-lg text-red-600 hover:text-red-700 hover:bg-red-50 transition-colors"
+                >
+                  <LogOut size={18} />
+                  <span>Logout</span>
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="max-w-6xl mx-auto px-6 py-8">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
         {currentView === 'blogs' && (
           <BlogsList blogs={blogs} onBlogsUpdate={fetchBlogs} currentUser={user} />
         )}
@@ -137,8 +209,7 @@ function AuthComponent({ onLogin, onBlogsUpdate }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
     setLoading(true);
     setError('');
 
@@ -202,7 +273,7 @@ function AuthComponent({ onLogin, onBlogsUpdate }) {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="space-y-6">
           {!isLogin && (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -249,13 +320,13 @@ function AuthComponent({ onLogin, onBlogsUpdate }) {
           )}
 
           <button
-            type="submit"
+            onClick={handleSubmit}
             disabled={loading}
             className="w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 transition-colors font-medium disabled:opacity-50"
           >
             {loading ? 'Please wait...' : (isLogin ? 'Login' : 'Sign Up')}
           </button>
-        </form>
+        </div>
 
         <div className="mt-6 text-center">
           <button
@@ -300,7 +371,7 @@ function BlogsList({ blogs, onBlogsUpdate, currentUser }) {
         <div className="text-gray-600">{blogs.length} posts</div>
       </div>
 
-      <div className="grid gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {blogs.map((blog) => (
           <article key={blog.id} className="bg-white rounded-xl shadow-sm border hover:shadow-md transition-shadow p-6">
             <div className="flex justify-between items-start mb-4">
@@ -380,7 +451,7 @@ function CreateBlog({ onBlogsUpdate, onViewChange }) {
           <h2 className="text-3xl font-bold text-gray-900">Write New Blog</h2>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="space-y-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Title
@@ -409,23 +480,22 @@ function CreateBlog({ onBlogsUpdate, onViewChange }) {
             />
           </div>
 
-          <div className="flex space-x-4">
+          <div className="flex flex-col sm:flex-row gap-4">
             <button
-              type="submit"
+              onClick={handleSubmit}
               disabled={loading}
-              className="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors font-medium disabled:opacity-50"
+              className="w-full sm:w-auto bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors font-medium disabled:opacity-50"
             >
               {loading ? 'Publishing...' : 'Publish Blog'}
             </button>
             <button
-              type="button"
               onClick={() => onViewChange('blogs')}
-              className="bg-gray-100 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-200 transition-colors font-medium"
+              className="w-full sm:w-auto bg-gray-100 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-200 transition-colors font-medium"
             >
               Cancel
             </button>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   );
