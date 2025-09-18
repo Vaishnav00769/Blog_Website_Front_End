@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { User, PenTool, LogOut, Plus, Trash2, Edit3 } from 'lucide-react';
 
-const API_BASE = 'https://blog-website-back-end.onrender.com/';
+const API_BASE = 'https://blog-website-back-end.onrender.com';
 
 function App() {
   const [user, setUser] = useState(null);
